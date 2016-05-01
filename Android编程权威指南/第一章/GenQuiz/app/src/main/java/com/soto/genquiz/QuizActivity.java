@@ -22,7 +22,7 @@ public class QuizActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(QuizActivity.this,R.string.correct_toast,Toast.LENGTH_SHORT).show();
+                Toast.makeText(QuizActivity.this, R.string.correct_toast, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -30,7 +30,7 @@ public class QuizActivity extends AppCompatActivity {
         mFalse_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(QuizActivity.this,R.string.false_button,Toast.LENGTH_LONG).show();
+                Toast.makeText(QuizActivity.this, R.string.false_button, Toast.LENGTH_LONG).show();
             }
         });
 
