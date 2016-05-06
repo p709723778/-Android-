@@ -2,6 +2,7 @@ package com.soto.genquiz;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,10 @@ public class QuizActivity extends AppCompatActivity {
 
     private TextView mQuestionTextView;
 
+    private static final String TAG = "QuizActivity";
+
+    private static final String KEY_INDEX = "index";
+
     private TrueFalse[] mQuestionBank = new TrueFalse[]{
             new TrueFalse(R.string.question_oceans, true),
             new TrueFalse(R.string.question_mideast, false),
@@ -32,6 +37,14 @@ public class QuizActivity extends AppCompatActivity {
     private int mCurrentIndexInt = 0;
 
     @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putInt(KEY_INDEX, mCurrentIndexInt);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
@@ -39,6 +52,9 @@ public class QuizActivity extends AppCompatActivity {
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
 
+        if (savedInstanceState != null){
+            mCurrentIndexInt = savedInstanceState.getInt(KEY_INDEX, 0);
+        }
         updateQuestion();
 
         mQuestionTextView.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +105,43 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
+        TrueFalse question;
+        try {
+            question = mQuestionBank[mCurrentIndexInt];
+        }catch (ArrayIndexOutOfBoundsException ex){
+            Log.e(TAG,"Index was out of bounds",ex);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart() called");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause() called");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume() called");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop() called");
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy() called");
     }
 
     private void updateQuestion() {
