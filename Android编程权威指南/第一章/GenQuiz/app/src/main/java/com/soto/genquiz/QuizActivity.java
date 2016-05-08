@@ -1,5 +1,6 @@
 package com.soto.genquiz;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,10 @@ public class QuizActivity extends AppCompatActivity {
 
     private TextView mQuestionTextView;
 
+    private Button mCheatButton;
+
+    private boolean mIsCheater;
+
     private static final String TAG = "QuizActivity";
 
     private static final String KEY_INDEX = "index";
@@ -37,7 +42,7 @@ public class QuizActivity extends AppCompatActivity {
     private int mCurrentIndexInt = 0;
 
     @Override
-    protected void onSaveInstanceState(Bundle savedInstanceState){
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
 
         Log.i(TAG, "onSaveInstanceState");
@@ -49,10 +54,23 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
+        mIsCheater = false;
+
+        mCheatButton = (Button) findViewById(R.id.cheat_button);
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(QuizActivity.this, CheatActivity.class);
+                boolean answerIsTtre = mQuestionBank[mCurrentIndexInt].isTrueQuestion();
+                intent.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, answerIsTtre);
+                startActivityForResult(intent, 0);
+
+            }
+        });
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             mCurrentIndexInt = savedInstanceState.getInt(KEY_INDEX, 0);
         }
         updateQuestion();
@@ -108,9 +126,20 @@ public class QuizActivity extends AppCompatActivity {
         TrueFalse question;
         try {
             question = mQuestionBank[mCurrentIndexInt];
-        }catch (ArrayIndexOutOfBoundsException ex){
-            Log.e(TAG,"Index was out of bounds",ex);
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            Log.e(TAG, "Index was out of bounds", ex);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null) {
+            return;
+        }
+
+        mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+
+        checkAnswer(mIsCheater);
     }
 
     @Override
@@ -154,11 +183,15 @@ public class QuizActivity extends AppCompatActivity {
 
         int messageResId = 0;
 
-        if (userPressdTrue == answerIsTrue) {
-            messageResId = R.string.correct_toast;
+        if (mIsCheater) {
+            messageResId = R.string.judgment_toast;
         } else {
+            if (userPressdTrue == answerIsTrue) {
+                messageResId = R.string.correct_toast;
+            } else {
 
-            messageResId = R.string.incorrect_toast;
+                messageResId = R.string.incorrect_toast;
+            }
         }
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
     }
