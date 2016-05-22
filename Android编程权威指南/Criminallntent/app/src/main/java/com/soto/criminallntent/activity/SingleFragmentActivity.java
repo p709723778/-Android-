@@ -1,5 +1,6 @@
 package com.soto.criminallntent.activity;
 
+import android.content.res.Configuration;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -23,5 +24,11 @@ public abstract class SingleFragmentActivity extends FragmentActivity {
             fragment = createFragment();
             fm.beginTransaction().add(R.id.fragmentContainer, fragment).commit();
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        
+
     }
 }

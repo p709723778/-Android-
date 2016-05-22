@@ -1,5 +1,6 @@
 package com.soto.criminallntent.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.soto.criminallntent.R;
+import com.soto.criminallntent.activity.CrimePagerActivity;
 import com.soto.criminallntent.model.Crime;
 import com.soto.criminallntent.model.CrimeLab;
 
@@ -22,6 +24,8 @@ public class CrimeListFragment extends ListFragment {
     private ArrayList<Crime> mCrimes;
 
     private static final String TAG = "CrimeListFragment";
+
+    private static final int REQUEST_CRIME = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,10 @@ public class CrimeListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         Crime c = (Crime) (getListAdapter()).getItem(position);
         Log.d(TAG, c.getTitle() + " was clicked");
+
+        Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
+        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID,c.getId());
+        startActivityForResult(intent,REQUEST_CRIME);
     }
 
     private class CrimeAdapter extends ArrayAdapter<Crime> {
@@ -69,4 +77,20 @@ public class CrimeListFragment extends ListFragment {
         }
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((CrimeAdapter)getListAdapter()).notifyDataSetChanged();
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == REQUEST_CRIME)
+        {
+            Log.d(TAG, String.valueOf(data));
+        }
+    }
 }
